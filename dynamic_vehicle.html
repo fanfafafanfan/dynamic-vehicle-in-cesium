@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8" />
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <title>Hello World!</title>
+    <script src="../Build/Cesium/Cesium.js">
+    </script>
+
+
+    <style>
+        @import url(../Build/Cesium/Widgets/widgets.css);
+
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+
+
+
+
+</head>
+
+<body>
+    <div id="cesiumContainer"></div>
+    <script>
+        Cesium.Ion.defaultAccessToken =
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyYzNjMGZiOC00NDgwLTQyODAtYjc3MS1mNTk1Y2FlZjBlNzQiLCJpZCI6Mjk4NDYsInNjb3BlcyI6WyJhc2wiLCJhc3IiLCJhc3ciLCJnYyIsInByIl0sImlhdCI6MTU5Mjc5NzgxNH0.KloQubg4El9qmZogBeV0JeZH3yfLjkFbWF364pP8Nvo';
+        var viewer = new Cesium.Viewer("cesiumContainer", {
+            terrainProvider: Cesium.createWorldTerrain(),
+        });
+        var terrainProvider = Cesium.createWorldTerrain();
+        //get positions terrainHeight
+        var positions = [
+            //测试时所用的坐标数据。。
+            //Cesium.Cartographic.fromDegrees(103.667886, 32.051531),
+            //Cesium.Cartographic.fromDegrees(103.664483, 32.054231),
+            //Cesium.Cartographic.fromDegrees(103.662779, 32.057314),
+            Cesium.Cartographic.fromDegrees(106.3810192,34.5401857), //转换后的坐标以弧度为单位。
+            Cesium.Cartographic.fromDegrees(106.3811396,34.5400737),
+            Cesium.Cartographic.fromDegrees(106.3813468,34.539911),
+        ];
+        var promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+        Cesium.when(promise, function (updatedPositions) {
+
+            var czml = [{
+                    id: "document",
+                    version: "1.0",
+                    clock: {
+                        interval: "2018-07-19T15:18:00Z/2018-07-19T15:18:30Z",
+                        currentTime: "2018-07-19T15:18:00Z",
+                        multiplier: 5,
+                        range: "LOOP_STOP",
+                        step: "SYSTEM_CLOCK_MULTIPLIER",
+                    },
+                },
+
+                {
+                    id: "CesiumMilkTruck",
+                    position: {
+                        interpolationAlgorithm: "LINEAR",
+                        forwardExtrapolationType: "HOLD",
+                        cartographicRadians: [
+                            "2018-07-19T15:18:00Z", updatedPositions[0].longitude, updatedPositions[0]
+                            .latitude, updatedPositions[0].height,
+                            "2018-07-19T15:18:15Z", updatedPositions[1].longitude, updatedPositions[1]
+                            .latitude, updatedPositions[1].height,
+                            "2018-07-19T15:18:30Z", updatedPositions[2].longitude, updatedPositions[2]
+                            .latitude, updatedPositions[2].height,
+                        ],
+                    },
+                    path: {
+                        leadTime: 86400,
+                        trailTime: 86400,
+                        material: {
+                            polylineOutline: {
+                                color: {
+                                    rgba: [255, 0, 0, 255],
+                                },
+                                outlineColor: {
+                                    rgba: [255, 255, 255, 255],
+                                },
+                            },
+                        },
+                        outlineWidth: 2,
+                        width: 3,
+                    },
+                    model: {
+                        gltf: "SampleData/models/CesiumMilkTruck/CesiumMilkTruck.glb",
+                        scale: 2
+                    },
+                },
+            ];
+
+
+            var dataSource = new Cesium.CzmlDataSource();
+            dataSource.load(czml);
+            viewer.dataSources.add(dataSource).then(function(ds){
+                var s = ds.entities.getById("CesiumMilkTruck");
+                s.orientation =new Cesium.VelocityOrientationProperty(s.position);
+
+            });
+            viewer.zoomTo(dataSource);
+        });
+    </script>
+</body>
+
+</html>
