@@ -44,13 +44,11 @@
         var terrainProvider = Cesium.createWorldTerrain();
         //get positions terrainHeight
         var positions = [
-            //测试时所用的坐标数据。。
-            //Cesium.Cartographic.fromDegrees(103.667886, 32.051531),
-            //Cesium.Cartographic.fromDegrees(103.664483, 32.054231),
-            //Cesium.Cartographic.fromDegrees(103.662779, 32.057314),
-            Cesium.Cartographic.fromDegrees(106.3810192,34.5401857), //转换后的坐标以弧度为单位。
-            Cesium.Cartographic.fromDegrees(106.3811396,34.5400737),
-            Cesium.Cartographic.fromDegrees(106.3813468,34.539911),
+          
+            Cesium.Cartographic.fromDegrees(103.667886, 32.051531),
+            Cesium.Cartographic.fromDegrees(103.664483, 32.054231),
+            Cesium.Cartographic.fromDegrees(103.662779, 32.057314),
+            
         ];
         var promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
         Cesium.when(promise, function (updatedPositions) {
